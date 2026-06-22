@@ -18,6 +18,18 @@
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
+            @if($errors->any())
+                <div class="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
+                    <div class="rounded-md bg-red-50 p-4">
+                        <div class="text-sm text-red-700">
+                            @foreach($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white shadow">

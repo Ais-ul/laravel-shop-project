@@ -19,7 +19,9 @@
                         <p class="text-sm font-medium text-indigo-600">{{ $product->category->name ?? 'Fara categorie' }}</p>
                         <h1 class="mt-2 text-3xl font-bold text-gray-900">{{ $product->name }}</h1>
                         <p class="mt-4 text-2xl font-semibold text-emerald-700">{{ $product->price }} lei</p>
-                        <p class="mt-2 text-sm text-gray-500">Stoc disponibil: {{ $product->stock }}</p>
+                        <p class="mt-2 text-sm {{ $product->stock > 0 ? 'text-gray-500' : 'text-red-600' }}">
+                            Stoc: {{ $product->stock > 0 ? $product->stock : 'Epuizat' }}
+                        </p>
 
                         <div class="mt-6 border-t border-gray-200 pt-6">
                             <p class="text-gray-700">{{ $product->description }}</p>
@@ -27,12 +29,18 @@
 
                         <div class="mt-8 flex flex-wrap gap-3">
                             @auth
-                                <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="rounded-md bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-500">
-                                        Adauga in cos
+                                @if($product->stock > 0)
+                                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="rounded-md bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-500">
+                                            Adauga in cos
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" disabled class="cursor-not-allowed rounded-md bg-gray-300 px-5 py-3 text-sm font-semibold text-gray-500">
+                                        Stoc epuizat
                                     </button>
-                                </form>
+                                @endif
 
                                 @if(auth()->user()->isAdmin())
                                     <a href="{{ route('admin.products.edit', $product->id) }}" class="rounded-md border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">

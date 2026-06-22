@@ -25,6 +25,13 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($productId);
 
+        if ($product->stock <= 0) {
+            return back()
+                ->withErrors([
+                    'stock' => 'Produsul este stoc epuizat.',
+                ]);
+        }
+
         $cart = Cart::firstOrCreate([
             'user_id' => Auth::id(),
         ]);

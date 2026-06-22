@@ -44,7 +44,7 @@
                                 </div>
 
                                 <p class="mt-3 text-sm text-gray-600">{{ \Illuminate\Support\Str::limit($product->description, 90) }}</p>
-                                <p class="mt-3 text-sm text-gray-500">Stoc: <span class="font-semibold text-gray-800">{{ $product->stock }}</span></p>
+                                <p class="mt-3 text-sm text-gray-500">Stoc: <span class="font-semibold {{ $product->stock > 0 ? 'text-gray-800' : 'text-red-600' }}">{{ $product->stock > 0 ? $product->stock : 'Epuizat' }}</span></p>
 
                                 <div class="mt-5 flex flex-wrap items-center gap-2">
                                     <a href="{{ route('products.show', $product->id) }}" class="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
@@ -52,12 +52,18 @@
                                     </a>
 
                                     @auth
-                                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
-                                                Adauga in cos
+                                        @if($product->stock > 0)
+                                            <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                                                    Adauga in cos
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button" disabled class="inline-flex cursor-not-allowed items-center justify-center rounded-md bg-gray-300 px-3 py-2 text-sm font-semibold text-gray-500">
+                                                Stoc epuizat
                                             </button>
-                                        </form>
+                                        @endif
                                     @else
                                         <a href="{{ route('login') }}" class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
                                             Login pentru cos

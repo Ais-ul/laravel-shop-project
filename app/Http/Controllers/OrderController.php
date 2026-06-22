@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -56,32 +57,46 @@ class OrderController extends Controller
             return redirect()->route('cart.index');
         }
 
+        foreach ($cart->items as $item) {
+            if ($item->product->stock < $item->quantity) {
+                return back()
+                    ->withErrors([
+                        'stock' => 'Stoc insuficient pentru ' . $item->product->name,
+                    ])
+                    ->withInput();
+            }
+        }
+
         $total = 0;
 
         foreach ($cart->items as $item) {
             $total += $item->product->price * $item->quantity;
         }
 
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'total_price' => $total,
-            'status' => 'pending',
-            'address' => $request->address,
-            'phone' => $request->phone,
-        ]);
-
-        foreach ($cart->items as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item->product_id,
-                'quantity' => $item->quantity,
-                'price' => $item->product->price,
+        DB::transaction(function () use ($cart, $request, $total) {
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'total_price' => $total,
+                'status' => 'pending',
+                'address' => $request->address,
+                'phone' => $request->phone,
             ]);
-        }
 
-        $cart->items()->delete();
+            foreach ($cart->items as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
+                ]);
 
-        return redirect()->route('orders.show', $order->id);
+                $item->product->decrement('stock', $item->quantity);
+            }
+
+            $cart->items()->delete();
+        });
+
+        return redirect()->route('orders.index');
     }
 
     /**
