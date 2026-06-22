@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -30,9 +31,26 @@ class OrderController extends Controller
             'status' => ['required', 'in:pending,paid,shipped,cancelled,done'],
         ]);
 
-        $order->update([
-            'status' => $request->status,
-        ]);
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        DB::transaction(function () use ($order, $oldStatus, $newStatus) {
+            if ($oldStatus !== 'cancelled' && $newStatus === 'cancelled') {
+                foreach ($order->items as $item) {
+                    $item->product->increment('stock', $item->quantity);
+                }
+            }
+
+            if ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+                foreach ($order->items as $item) {
+                    $item->product->decrement('stock', $item->quantity);
+                }
+            }
+
+            $order->update([
+                'status' => $newStatus,
+            ]);
+        });
 
         return redirect()->route('admin.orders.show', $order->id);
     }
