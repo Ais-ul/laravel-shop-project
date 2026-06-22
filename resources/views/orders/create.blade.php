@@ -15,12 +15,25 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Adresa</label>
-                            <textarea class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" name="address" rows="5">{{ old('address') }}</textarea>
+                            <textarea
+    name="address"
+    required
+    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+></textarea>
+
+@error('address')
+    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+@enderror
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Telefon</label>
-                            <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" type="text" name="phone" value="{{ old('phone') }}">
+                            <input
+    type="text"
+    name="phone"
+    required
+    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+>
                         </div>
 
                         <div class="flex flex-wrap gap-3">

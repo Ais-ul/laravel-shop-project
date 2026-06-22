@@ -43,6 +43,11 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+
+       $request->validate([
+        'address' => 'required|string',
+        'phone' => 'required|string',
+    ]);
         $cart = Cart::where('user_id', Auth::id())
             ->with('items.product')
             ->first();
