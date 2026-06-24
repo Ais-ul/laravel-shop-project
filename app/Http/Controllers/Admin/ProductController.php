@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -32,18 +33,23 @@ class ProductController extends Controller
             'description' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
-            'image' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        Product::create($request->only([
+        $data = $request->only([
             'category_id',
             'name',
             'slug',
             'description',
             'price',
             'stock',
-            'image',
-        ]));
+        ]);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = 'storage/' . $request->file('image')->store('products', 'public');
+        }
+
+        Product::create($data);
 
         return redirect()->route('admin.products.index');
     }
@@ -71,18 +77,27 @@ class ProductController extends Controller
             'description' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
-            'image' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $product->update($request->only([
+        $data = $request->only([
             'category_id',
             'name',
             'slug',
             'description',
             'price',
             'stock',
-            'image',
-        ]));
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($product->image && str_starts_with($product->image, 'storage/')) {
+                Storage::disk('public')->delete(substr($product->image, 8));
+            }
+
+            $data['image'] = 'storage/' . $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($data);
 
         return redirect()->route('admin.products.index');
     }

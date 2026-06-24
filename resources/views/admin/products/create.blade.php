@@ -6,7 +6,7 @@
     <div class="py-10">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <div class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-200">
-                <form class="space-y-5" action="{{ route('admin.products.store') }}" method="POST">
+                <form class="space-y-5" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div>
@@ -44,8 +44,8 @@
                             <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" type="number" name="stock" value="{{ old('stock') }}">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Imagine URL</label>
-                            <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" type="text" name="image" value="{{ old('image') }}">
+                            <label class="block text-sm font-medium text-gray-700">Imagine produs</label>
+                            <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" type="file" name="image">
                         </div>
                     </div>
 

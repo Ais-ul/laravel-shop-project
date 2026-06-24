@@ -9,7 +9,7 @@
                 <div class="grid md:grid-cols-2">
                     <div class="aspect-square bg-gray-100">
                         @if($product->image)
-                            <img src="{{ $product->image }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
+                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
                         @else
                             <div class="flex h-full items-center justify-center text-gray-400">Fara imagine</div>
                         @endif

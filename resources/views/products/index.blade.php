@@ -24,7 +24,7 @@
                         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
                             <div class="aspect-[4/3] bg-gray-100">
                                 @if($product->image)
-                                    <img src="{{ $product->image }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
+                                    <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
                                 @else
                                     <div class="flex h-full items-center justify-center text-sm font-medium text-gray-400">
                                         Fara imagine
