@@ -18,6 +18,12 @@
                     $total = 0;
                 @endphp
 
+                @if ($errors->has('quantity'))
+                    <div class="mb-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                        {{ $errors->first('quantity') }}
+                    </div>
+                @endif
+
                 <div class="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -44,7 +50,7 @@
                                             @csrf
                                             @method('PUT')
 
-                                            <input class="w-20 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" type="number" name="quantity" value="{{ $item->quantity }}" min="1">
+                                            <input class="w-24 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}">
                                             <button class="rounded-md border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50" type="submit">
                                                 Update
                                             </button>

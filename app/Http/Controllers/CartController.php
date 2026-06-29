@@ -65,6 +65,14 @@ class CartController extends Controller
 
         $quantity = max(1, (int) $request->quantity);
 
+        if ($quantity > $cartItem->product->stock) {
+            return back()
+                ->withErrors([
+                    'quantity' => 'Cantitatea introdusă depășește stocul disponibil (' . $cartItem->product->stock . ').',
+                ])
+                ->withInput();
+        }
+
         $cartItem->update([
             'quantity' => $quantity,
         ]);
